@@ -40,4 +40,10 @@ body {
 .child {
   font-size: 2rem;
   pointer-events: none;
+  position: relative;
+  transition: transform 2s cubic-bezier(0.87, 0, 0.13, 1);
+}
+
+.child .inner-div {
+  font-size: 2rem;
 }
