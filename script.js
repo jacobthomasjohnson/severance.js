@@ -92,6 +92,16 @@ for(const child of document.querySelectorAll('.child')) {
     // Set the position of this individual cell to transition to it's new random location
     child.style.transform = 'translateX(' + xMove + 'px) translateY(' + yMove + 'px)'
 
-  },program.settings.moveEvery);
+  }, program.settings.moveEvery);
 
 }
+
+const mobileText = document.querySelector('.mobile-text')
+
+function randInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+setInterval(() => {
+  mobileText.style.transform = 'translateX(' + randInt(-1, 1) + 'px) translateY(' + randInt(-1, 1) + 'px)'
+},500)

@@ -49,4 +49,32 @@ body {
   font-size: 2rem;
 }
 
+.mobile {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: none;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(100, 6, 6);
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+@media only screen and (max-width: 1079px) {
+  .wrapper {
+    display: none;
+  }
+
+  .mobile {
+    display: flex;
+    opacity: 100%;
+  }
+
+  .mobile-text {
+    transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 3.275);
+  }
+}
+
 /*# sourceMappingURL=style.css.map */
