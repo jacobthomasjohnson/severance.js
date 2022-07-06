@@ -7,6 +7,9 @@ The goal of the project is to emulate the software used at Lumon Industries. In 
 ## Screenshots
 ![Preview of severance.js in action](https://jacob.ac/severance.js/1.2/resources/screenshot.png)
 
+## Current state of application
+Currently, the application is purely visual and has limited interactivity capabilities. The script generates a series of cells, randomly generating integers - then adds simple animation to each cell respectively to give the numbers a sort of "floating" effect. The mouse also acts as a point of interest, increasing nearby cells in size using CSS scale properties. This project is in it's early stages and will be updated regularly to better reflect the show's vision.
+
 ## Plans for future feature implementation
 As of now, the application is purely visual (v1.2)
 
