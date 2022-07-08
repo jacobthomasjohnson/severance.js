@@ -8,7 +8,7 @@ The goal of the project is to emulate the software used at Lumon Industries. In 
 ![Preview of severance.js in action](https://jacob.ac/severance.js/1.2/resources/screenshot.png)
 
 ## Current state of application
-#V1.3
+# V1.3
 - Add color trailing functionality for more visual appeal
 - Place start screen, where when clicked reveals full application
 
