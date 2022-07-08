@@ -4,6 +4,8 @@ const program = { // Object which holds all application functionality
 
     // How often cells begin their next transition to a new location
     moveEvery: 2000,
+    amountToRotate: 5,
+    startPrompt: 'Click Anywhere To Begin'
 
   },
 
@@ -68,6 +70,24 @@ const program = { // Object which holds all application functionality
       }
     },
 
+    clickToStart: () => {
+
+      let div = document.createElement('div');
+
+      div.classList.add('click-to-start');
+
+      div.textContent = program.settings.startPrompt;
+
+      document.querySelector('.wrapper').appendChild(div);
+
+    },
+
+    randInt: (min, max) => {
+      
+      return Math.floor(Math.random() * (max - min + 1) + min)
+
+    }
+
 
   }
 }
@@ -75,9 +95,22 @@ const program = { // Object which holds all application functionality
 // Initialize 144 cells and append them
 program.func.createCells(144)
 
+program.func.clickToStart();
+
+// App Start
+
+window.addEventListener('click', () => {
+  for(const div of document.querySelectorAll('.inner-div')) {
+    document.querySelector('.click-to-start').classList.add('inactive');
+    div.classList.add('show');
+  }
+})
+
 // Add mouse move interactivity using the Interact function
 document.querySelector('.wrapper').addEventListener('mousemove', (e) => {
+
   program.func.interact(e)
+
 })
 
 // Initialize and repeat random movement of each cell
@@ -90,18 +123,47 @@ for(const child of document.querySelectorAll('.child')) {
     let yMove = Math.floor(Math.random() * 10);
 
     // Set the position of this individual cell to transition to it's new random location
-    child.style.transform = 'translateX(' + xMove + 'px) translateY(' + yMove + 'px)'
+    child.style.transform = 
+      'translateX('
+      + xMove 
+      + 'px) translateY(' 
+      + yMove 
+      + 'px) rotate('
+      + program.func.randInt(-program.settings.amountToRotate, program.settings.amountToRotate)
+      + 'deg)';
 
   }, program.settings.moveEvery);
 
 }
 
-const mobileText = document.querySelector('.mobile-text')
+for(const div of document.querySelectorAll('.inner-div')) {
 
-function randInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) + min)
+  div.addEventListener('mousemove', () => {
+
+    div.classList.remove('slow-out');
+    div.classList.add('active');
+
+  });
+
+  div.addEventListener('mouseout', () => {
+
+    div.classList.remove('active');
+    div.classList.add('slow-out');
+
+  });
+
 }
 
+
+
+
+// Mobile Configuration
+
+const mobileText = document.querySelector('.mobile-text')
+
 setInterval(() => {
-  mobileText.style.transform = 'translateX(' + randInt(-1, 1) + 'px) translateY(' + randInt(-1, 1) + 'px)'
+
+  mobileText.style.transform = 'translateX(' + program.func.randInt(-1, 1) + 'px) translateY(' + program.func.randInt(-1, 1) + 'px)'
+
 },500)
+
