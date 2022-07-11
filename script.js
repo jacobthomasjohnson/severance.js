@@ -5,7 +5,13 @@ const program = { // Object which holds all application functionality
     // How often cells begin their next transition to a new location
     moveEvery: 2000,
     amountToRotate: 5,
-    startPrompt: 'Click Anywhere To Begin'
+    startPrompt: 'Click Anywhere To Begin',
+
+    bool: {
+
+      mouseDown: false
+
+    }
 
   },
 
@@ -20,17 +26,23 @@ const program = { // Object which holds all application functionality
           // Create two divs, one outer and one inner
           let div = document.createElement('div')
           let innerDiv = document.createElement('div')
+          let moveDiv = document.createElement('div')
 
           // Add classes to each div that was generated
           div.classList.add('child')
           innerDiv.classList.add('inner-div')
+          moveDiv.classList.add('move-div')
 
-          // Generate text content for inner div
-          innerDiv.textContent = Math.floor(Math.random() * 10)
+          // Generate text content for move div
+          moveDiv.textContent = Math.floor(Math.random() * 10)
 
           // Append divs to respective parents
-          document.querySelector('.parent').appendChild(div);
+          
+          innerDiv.appendChild(moveDiv);
           div.appendChild(innerDiv);
+          document.querySelector('.parent').appendChild(div);
+
+
 
         }
 
@@ -44,28 +56,32 @@ const program = { // Object which holds all application functionality
     // Function to update scale of each cell based on mouse position
     interact: (e) => {
 
-      let innerDivs = document.querySelectorAll('.inner-div')
-      
-      x = e.clientX
-      y = e.clientY
+      if(!program.settings.bool.mouseDown) {
 
-      const lerp = (x, y, a) => x * (1 - a) + y * a;
-      const clamp = (a, min = 0, max = 1) => Math.min(max, Math.max(min, a));
-      const invlerp = (x, y, a) => clamp((a - x) / (y - x));
-      const range = (x1, y1, x2, y2, a) => lerp(x2, y2, invlerp(x1, y1, a));
+        let innerDivs = document.querySelectorAll('.inner-div')
+        
+        x = e.clientX
+        y = e.clientY
 
-      for(const inner of innerDivs) {
+        const lerp = (x, y, a) => x * (1 - a) + y * a;
+        const clamp = (a, min = 0, max = 1) => Math.min(max, Math.max(min, a));
+        const invlerp = (x, y, a) => clamp((a - x) / (y - x));
+        const range = (x1, y1, x2, y2, a) => lerp(x2, y2, invlerp(x1, y1, a));
 
-        // Calculate the distance between the mouse position and this specific inner div
-        const calculateDistance = (elem, mouseX, mouseY) => { 
-          return Math.floor(Math.sqrt(Math.pow(mouseX - (elem.getBoundingClientRect().left+(elem.clientWidth/2)), 2) + Math.pow(mouseY - (elem.getBoundingClientRect().top+(elem.clientHeight/2)), 2)))
-        }
+        for(const inner of innerDivs) {
 
-        // Use interpolation to determine correct scale values for each cell
-        let distance = invlerp(1, 1000, calculateDistance(inner, x, y));
+          // Calculate the distance between the mouse position and this specific inner div
+          const calculateDistance = (elem, mouseX, mouseY) => { 
+            return Math.floor(Math.sqrt(Math.pow(mouseX - (elem.getBoundingClientRect().left+(elem.clientWidth/2)), 2) + Math.pow(mouseY - (elem.getBoundingClientRect().top+(elem.clientHeight/2)), 2)))
+          }
 
-        // Set each cell's transform scale to reflect the distance between the mouse and cell location
-        inner.style.transform = 'scale(' + lerp(2, 0.5, distance) + ')';
+          // Use interpolation to determine correct scale values for each cell
+          let distance = invlerp(1, 1000, calculateDistance(inner, x, y));
+
+          // Set each cell's transform scale to reflect the distance between the mouse and cell location
+          inner.style.transform = 'scale(' + lerp(2, 0.5, distance) + ')';
+
+      }
 
       }
     },
@@ -123,22 +139,33 @@ for(const child of document.querySelectorAll('.child')) {
     let yMove = Math.floor(Math.random() * 10);
 
     // Set the position of this individual cell to transition to it's new random location
-    child.style.transform = 
-      'translateX('
-      + xMove 
-      + 'px) translateY(' 
-      + yMove 
-      + 'px) rotate('
-      + program.func.randInt(-program.settings.amountToRotate, program.settings.amountToRotate)
-      + 'deg)';
+
+    if(!program.settings.bool.mouseDown) {
+
+      child.style.transform = 
+        'translateX('
+        + xMove 
+        + 'px) translateY(' 
+        + yMove 
+        + 'px) rotate('
+        + program.func.randInt(-program.settings.amountToRotate, program.settings.amountToRotate)
+        + 'deg)';
+
+    }
+
+
 
   }, program.settings.moveEvery);
 
+
+
 }
+
+const parent = document.querySelector('.parent');
 
 for(const div of document.querySelectorAll('.inner-div')) {
 
-  div.addEventListener('mousemove', () => {
+  div.addEventListener('mousemove', (e) => {
 
     div.classList.remove('slow-out');
     div.classList.add('active');
@@ -154,6 +181,44 @@ for(const div of document.querySelectorAll('.inner-div')) {
 
 }
 
+for(const div of document.querySelectorAll('.move-div')) {
+
+  div.addEventListener('mousedown', (e) => {
+
+    program.settings.bool.mouseDown = true;
+    program.settings.bool.selected = div;
+
+  });
+
+}
+
+document.addEventListener('mousemove', (e) => {
+
+    if(program.settings.bool.mouseDown) {
+
+      let y = e.clientY;
+      let x = e.clientX;
+
+      program.settings.bool.selected.style.top = y + 'px';
+      program.settings.bool.selected.style.left = x + 'px';
+
+    }
+
+})
+
+document.addEventListener('mouseup', (e) => {
+
+    if(program.settings.bool.mouseDown) {
+
+      program.settings.bool.selected.style.position = null;
+      program.settings.bool.mouseDown = false;
+      program.settings.bool.selected = null;
+      
+    }
+
+
+})
+
 
 
 
@@ -163,7 +228,11 @@ const mobileText = document.querySelector('.mobile-text')
 
 setInterval(() => {
 
-  mobileText.style.transform = 'translateX(' + program.func.randInt(-1, 1) + 'px) translateY(' + program.func.randInt(-1, 1) + 'px)'
+  mobileText.style.transform = 
+    'translateX(' + 
+    program.func.randInt(-1, 1) +
+     'px) translateY(' +
+     program.func.randInt(-1, 1) + 'px)'
 
 },500)
 
